@@ -33,7 +33,7 @@ class Blockchain:
         check_proof = False
         while check_proof is False:
             hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest() #genera un hash
-            if hash_operation[:4] == '0000': #compara el hash con el formato 0000
+            if hash_operation[:6] == '000000': #compara el hash con el formato 0000
                 check_proof = True 
             else:
                 new_proof += 1 #si no es igual a 0000, incrementa la prueba
@@ -53,7 +53,7 @@ class Blockchain:
             previous_proof = previous_block['proof'] #obtiene la prueba del bloque anterior
             proof = block['proof'] #obtiene la prueba del bloque actual
             hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest() #genera un hash
-            if hash_operation[:4] != '0000': 
+            if hash_operation[:6] != '000000': 
                 return False
             previous_block = block
             block_index += 1
@@ -63,6 +63,7 @@ class Blockchain:
 
 # crear una aplicacion flask
 app = Flask(__name__)
+# app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False;
 
 # crear una blockchain
 blockchain = Blockchain()
@@ -71,16 +72,36 @@ blockchain = Blockchain()
 
 @app.route('/mine_block', methods=['GET'])
 def mine_block():
-    previous_block = blockchain.get_previous_block()
-    previous_proof = previous_block['proof']
-    proof = blockchain.proof_of_work(previous_proof)
-    previous_hash = blockchain.hash(previous_block)
-    block = blockchain.create_block(proof, previous_hash)
-    response = {'message': 'Congratulations, you just mined a block!',
+    previous_block = blockchain.get_previous_block() #obtiene el bloque anterior
+    previous_proof = previous_block['proof'] #obtiene la prueba del bloque anterior
+    proof = blockchain.proof_of_work(previous_proof) #genera una prueba de trabajo
+    previous_hash = blockchain.hash(previous_block)#genera un hash del bloque anterior
+    block = blockchain.create_block(proof, previous_hash) #crea un bloque
+    response = {'message': 'Congratulations, you just mined a block!', 
                 'index': block['index'],
                 'timestamp': block['timestamp'],
                 'proof': block['proof'],
                 'previous_hash': block['previous_hash']}
+    return jsonify(response), 200 #devuelve un json y un codigo de estado
+
+# validar la cadena de bloques
+@app.route('/is_valid', methods=['GET'])
+def is_valid():
+    is_valid = blockchain.is_chain_valid(blockchain.chain) #compara la cadena de bloques
+    if is_valid:
+        response = {'message': 'All good. The blockchain is valid.'}
+    else:
+        response = {'message': 'Houston, we have a problem. The blockchain is not valid.'}
     return jsonify(response), 200
+
+# Obtener la cadena de bloques completa
+@app.route('/get_chain', methods=['GET'])
+def get_chain():
+    response = {'chain': blockchain.chain, #devuelve la cadena de bloques
+                'length': len(blockchain.chain)} #devuelve el largo de la cadena
+    return jsonify(response), 200
+
+# ejeccutar la aplicacion
+app.run(host='0.0.0.0', port = 5000)
 
 
