@@ -18,10 +18,10 @@ class Blockchain:
 
     def create_block(self, proof, previous_hash):
         block = {'index': len(self.chain) + 1,  # genera un indice
-                 'timestamp': str(datetime.datetime.now()),  # tiempo real
-                 'proof': proof,  # validacion de la transaccion
-                 'previous_hash': previous_hash  # hash anterior
-                 }
+                'timestamp': str(datetime.datetime.now()),  # tiempo real
+                'proof': proof,  # validacion de la transaccion
+                'previous_hash': previous_hash  # hash anterior
+                }
         self.chain.append(block)
         return block
     
@@ -58,7 +58,7 @@ class Blockchain:
             previous_block = block
             block_index += 1
         return True
-    
+
 # parte 2
 
 # crear una aplicacion flask
