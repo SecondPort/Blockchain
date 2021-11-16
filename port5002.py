@@ -18,7 +18,7 @@ from uuid import uuid4  # generar un identificador unico
 class Blockchain:
     def __init__(self):
         self.chain = []
-        #self.mempool = []
+        self.mempool = []
         self.transactions = []
         self.create_block(proof=1, previous_hash='0')
         self.nodes = set()
@@ -31,7 +31,7 @@ class Blockchain:
                  'transactions': self.transactions  # transacciones
                  }
         self.transactions = []  # limpia las transacciones
-        self.chain.append(block) 
+        self.chain.append(block)
 
         return block
 
@@ -103,6 +103,10 @@ class Blockchain:
         return False
 
 # parte 2 minar de un bloque de la cadena
+
+
+
+
 # crear una aplicacion flask
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False;
@@ -123,7 +127,7 @@ def mine_block():
     # genera un hash del bloque anterior
     previous_hash = blockchain.hash(previous_block)
     # agrega una transaccion
-    blockchain.add_transaction(sender=node_address, receiver='Lucas', amount=1)
+    blockchain.add_transaction(sender=node_address, receiver='Pepe', amount=1)
     block = blockchain.create_block(proof, previous_hash)  # crea un bloque
     response = {'message': 'Congratulations, you just mined block number: {}'.format(block['index']),
                 'index': block['index'],
@@ -200,4 +204,4 @@ def replace_chain():
 
 
 # ejeccutar la aplicacion
-app.run(host='0.0.0.0', port=5000)
+app.run(host='0.0.0.0', port=5002)
