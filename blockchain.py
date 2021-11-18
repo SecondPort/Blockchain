@@ -65,7 +65,7 @@ class Blockchain:
 app = Flask(__name__)
 # app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False;
 
-# crear una blockchain
+
 blockchain = Blockchain()
 
 # Minar un bloque
