@@ -24,28 +24,28 @@ class Blockchain:
                 }
         self.chain.append(block) #agrega el bloque a la cadena
         return block
-    
+
     def get_previous_block(self):
         return self.chain[-1] #devuelve la cadena anterior
-    
-    def proof_of_work(self, previous_proof): #validacion de la transaccion 
+
+    def proof_of_work(self, previous_proof): #validacion de la transaccion
         new_proof = 1 #prueba inicial
         check_proof = False #variable de control
         while check_proof is False: #mientras no se cumpla la validacion
             hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest() #genera un hash
             if hash_operation[:6] == '000000': #compara el hash con el formato 0000
-                check_proof = True 
+                check_proof = True
             else:
                 new_proof += 1 #si no es igual a 0000, incrementa la prueba
         return new_proof #devuelve la prueba
-    
-    def hash(self, block): #genera un hash del bloque 
+
+    def hash(self, block): #genera un hash del bloque
         encoded_block = json.dumps( block, sort_keys=True).encode() #codifica el bloque
         return hashlib.sha256(encoded_block).hexdigest() #genera un hash del bloque
-    
+
     def is_chain_valid(self, chain): #verifica la cadena de bloques
         previous_block = chain[0] #obtiene el primer bloque
-        block_index = 1 #indice del bloque actual 
+        block_index = 1 #indice del bloque actual
         while block_index < len(chain):
             block = chain[block_index] #obtiene el bloque actual
             if block['previous_hash'] != self.hash(previous_block): #compara el hash del bloque anterior con el hash del bloque actual
@@ -53,7 +53,7 @@ class Blockchain:
             previous_proof = previous_block['proof'] #obtiene la prueba del bloque anterior
             proof = block['proof'] #obtiene la prueba del bloque actual
             hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest() #genera un hash
-            if hash_operation[:6] != '000000': 
+            if hash_operation[:6] != '000000':
                 return False
             previous_block = block
             block_index += 1
@@ -77,7 +77,7 @@ def mine_block():
     proof = blockchain.proof_of_work(previous_proof) #genera una prueba de trabajo
     previous_hash = blockchain.hash(previous_block)#genera un hash del bloque anterior
     block = blockchain.create_block(proof, previous_hash) #crea un bloque
-    response = {'message': 'Congratulations, you just mined a block!', 
+    response = {'message': 'Congratulations, you just mined a block!',
                 'index': block['index'],
                 'timestamp': block['timestamp'],
                 'proof': block['proof'],
