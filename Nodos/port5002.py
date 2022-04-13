@@ -25,11 +25,11 @@ class Blockchain:
 
     def create_block(self, proof, previous_hash):
         block = {'index': len(self.chain) + 1,  # genera un indice
-                 'timestamp': str(datetime.datetime.now()),  # tiempo real
-                 'proof': proof,  # validacion de la transaccion
-                 'previous_hash': previous_hash, # hash anterior
-                 'transactions': self.transactions  # transacciones
-                 }
+                'timestamp': str(datetime.datetime.now()),  # tiempo real
+                'proof': proof,  # validacion de la transaccion
+                'previous_hash': previous_hash, # hash anterior
+                'transactions': self.transactions  # transacciones
+                }
         self.transactions = []  # limpia las transacciones
         self.chain.append(block)
 
@@ -49,7 +49,7 @@ class Blockchain:
             else:
                 new_proof += 1  # si no es igual a 0000, incrementa la prueba
         return new_proof
-    
+
     def hash(self, block):
         encoded_block = json.dumps(
             block, sort_keys=True).encode()  # codifica el bloque
@@ -73,26 +73,26 @@ class Blockchain:
             previous_block = block
             block_index += 1
         return True
-    
+
     def add_transaction(self, sender, receiver, amount):
         self.transactions.append({'sende': sender,
                                     'receiver': receiver,
                                     'amount': amount})
         previous_block = self.get_previous_block()
         return previous_block['index'] + 1
-    
+
     def add_node(self, address):
         parsed_url = urllib.parse.urlparse(address)
         self.nodes.add(parsed_url.netloc)
-    
+
     def replace_chain(self):
         network = self.nodes # obtiene la red
         longest_chain = None # cadena mas larga
         max_length = len(self.chain) # longitud de la cadena actual
         for node in network:
             response = requests.get(f'http://{node}/get_chain')# obtiene la cadena de cada nodo
-            if response.status_code == 200: 
-                length = response.json()['length'] 
+            if response.status_code == 200:
+                length = response.json()['length']
                 chain = response.json()['chain']
                 if length > max_length and self.is_chain_valid(chain):# si la longitud es mayor que la actual y es valida
                     max_length = length
